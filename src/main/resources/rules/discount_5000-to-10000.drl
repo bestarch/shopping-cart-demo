@@ -1,0 +1,29 @@
+package com.bestarch.cart
+ 
+import com.bestarch.cart.model.PurchaseAmount;
+import com.bestarch.cart.model.Discount;
+
+
+dialect "mvel"
+ 
+rule "Apply discount when purchase amount > $5000 and amount <= $10000"
+	salience 20
+    activation-group "x"
+    when
+        $amount : PurchaseAmount( $amount.baseAmount > 5000 && $amount.baseAmount <= 10000)
+    then
+        System.out.println("Processing amount "+ $amount.baseAmount );
+        double deduction = ($amount.baseAmount-5000)*0.1;
+        System.out.println("Deduction for this rule "+ deduction);
+        Discount discount = new Discount();
+        discount.setAmount(deduction);
+        $amount.getApplicableDiscounts().add(discount);
+end
+
+/*rule "GoodBye"
+    when
+        Message( status == Message.GOODBYE, myMessage : message )
+    then
+        System.out.println( myMessage );
+end
+*/
